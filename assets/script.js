@@ -1,54 +1,91 @@
-const ws = new WebSocket(
-  location.protocol === "https:"
-    ? "wss://" + location.host
-    : "ws://" + location.host
-);
+const restartBtn = document.getElementById("restart");
+  let gameOver = false;
 
-const boardEl = document.getElementById("board");
-const statusEl = document.getElementById("status");
+  const ws = new WebSocket(
+    location.protocol === "https:"
+      ? "wss://" + location.host
+      : "ws://" + location.host
+  );
 
-let mySymbol = null;
-let currentPlayer = null;
-let board = [];
+  const boardEl = document.getElementById("board");
+  const statusEl = document.getElementById("status");
 
-function renderBoard() {
-  boardEl.innerHTML = "";
-  board.forEach((value, index) => {
-    const cell = document.createElement("div");
-    cell.className = "cell";
-    cell.textContent = value || "";
-    cell.onclick = () => {
-      if (!value && currentPlayer === mySymbol) {
-        ws.send(JSON.stringify({
-          type: "move",
-          index,
-          symbol: mySymbol
-        }));
+  let mySymbol = null;
+  let currentPlayer = null;
+  let board = [];
+
+  ws.onopen = () => {
+    console.log("WebSocket connected");
+  };
+
+  ws.onerror = (e) => {
+    console.error("WebSocket error", e);
+  };
+
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if (data.type === "init") {
+      mySymbol = data.symbol;
+      board = data.board;
+      currentPlayer = data.currentPlayer;
+      statusEl.textContent = `You are ${mySymbol}`;
+      render();
+    }
+
+    if (data.type === "update") {
+      board = data.board;
+      currentPlayer = data.currentPlayer;
+      statusEl.textContent = `Turn: ${currentPlayer}`;
+      render();
+    }
+
+    if (data.type === "gameOver") {
+      board = data.board;
+      gameOver = true;
+
+      if (data.result === "draw") {
+        statusEl.textContent = "It's a draw!";
+      } else {
+        statusEl.textContent = `Player ${data.result} wins!`;
       }
-    };
-    boardEl.appendChild(cell);
-  });
-}
 
-ws.onmessage = (event) => {
-  const data = JSON.parse(event.data);
+      restartBtn.style.display = "inline-block";
+      render();
+    }
 
-  if (data.type === "init") {
-    mySymbol = data.symbol;
-    board = data.board;
-    currentPlayer = data.currentPlayer;
-    statusEl.textContent = `You are ${mySymbol}`;
-    renderBoard();
+    if (data.type === "restart") {
+      board = data.board;
+      currentPlayer = data.currentPlayer;
+      gameOver = false;
+      statusEl.textContent = `Turn: ${currentPlayer}`;
+      restartBtn.style.display = "none";
+      render();
+    }
+
+  };
+
+  function render() {
+    boardEl.innerHTML = "";
+    board.forEach((v, i) => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.textContent = v || "";
+      cell.onclick = () => {
+        if (gameOver) return;
+        if (!v && currentPlayer === mySymbol) {
+          ws.send(JSON.stringify({
+            type: "move",
+            index: i,
+            symbol: mySymbol
+          }));
+        }
+      };
+
+      boardEl.appendChild(cell);
+    });
   }
 
-  if (data.type === "update") {
-    board = data.board;
-    currentPlayer = data.currentPlayer;
-    statusEl.textContent = `Turn: ${currentPlayer}`;
-    renderBoard();
-  }
-
-  if (data.type === "error") {
-    alert(data.message);
-  }
-};
+  restartBtn.onclick = () => {
+    ws.send(JSON.stringify({ type: "restart" }));
+  };
