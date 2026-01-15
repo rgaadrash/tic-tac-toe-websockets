@@ -115,5 +115,5 @@ wss.on("connection", (ws) => {
 });
 
 server.listen(PORT,'0.0.0.0', () => {
-  console.log("HTTP + WS running on 3000");
+  console.log(`HTTP + WS running on ${PORT}`);
 });
