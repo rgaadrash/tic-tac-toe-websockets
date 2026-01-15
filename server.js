@@ -9,6 +9,8 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 app.use(express.static("public"));
+app.use(express.static("assets"));
+
 
 let players = [];
 let board = Array(9).fill(null);
@@ -42,7 +44,7 @@ function broadcast(data) {
 }
 
 wss.on("connection", (ws) => {
-  console.log("WS connected");
+  console.log("WebSocket client connected");
 
   if (players.length >= 2) {
     ws.send(JSON.stringify({ type: "error", message: "Game full" }));
@@ -114,6 +116,10 @@ wss.on("connection", (ws) => {
   });
 });
 
-server.listen(PORT,'0.0.0.0', () => {
+// server.listen(PORT,'0.0.0.0', () => {
+//   console.log(`HTTP + WS running on ${PORT}`);
+// });
+
+server.listen(PORT, () => {
   console.log(`HTTP + WS running on ${PORT}`);
 });

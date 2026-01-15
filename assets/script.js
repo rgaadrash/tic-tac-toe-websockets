@@ -1,11 +1,15 @@
 const restartBtn = document.getElementById("restart");
   let gameOver = false;
 
-  const ws = new WebSocket(
-    location.protocol === "https:"
-      ? "wss://" + location.host
-      : "ws://" + location.host
-  );
+  // const ws = new WebSocket(
+  //   location.protocol === "https:"
+  //     ? "wss://" + location.host
+  //     : "ws://" + location.host
+  // );
+
+  const protocol = location.protocol === "https:" ? "wss" : "ws";
+  const ws = new WebSocket(`${protocol}://${location.host}`);
+
 
   const boardEl = document.getElementById("board");
   const statusEl = document.getElementById("status");
