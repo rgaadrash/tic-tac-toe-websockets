@@ -3,42 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>❌</text></svg>" /> -->
+    <link rel="icon" href="/favicon.png" />
+    
     <title>Tic Tac Toe - Websockets</title>
-    <style>
-      body { font-family: Arial; text-align: center; }
-      .board {
-        display: grid;
-        grid-template-columns: repeat(3, 100px);
-        gap: 10px;
-        justify-content: center;
-        margin-top: 20px;
-      }
-      .cell {
-        width: 100px;
-        height: 100px;
-        font-size: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid #000;
-        cursor: pointer;
-      }
-      .buttons-wrapper {
-        margin-top: 20px;
-        text-align: center;
-      }
-    </style>
+
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
 
-    <h2 id="status">Connecting...</h2>
-    <div class="board" id="board"></div>
-    <div class="buttons-wrapper">
-      <button id="restart" style="margin-top:20px; display:none;">
-        Restart Game
-      </button>
-    </div>
-    <script type="text/javascript" src="/script.js"></script>
+    <header class="brand">
+      <!-- <div class="logo">❌⭕</div> -->
+      <div class="logo">
+        <img src="/XO.png" alt="XO Arena">
+      </div>
+      <h1>XO Arena</h1>
+    </header>
+
+    <section id="join" class="card">
+      <h2>Choose your name or emoji</h2>
+      <input id="playerInput" placeholder="Name or 😎🔥👾" />
+      <button id="joinBtn">Join Game</button>
+    </section>
+
+    <section id="game" class="hidden">
+      <div class="scoreboard">
+        <div id="playerX">X: 0</div>
+        <div id="playerO">O: 0</div>
+      </div>
+
+      <h2 id="status">Connecting…</h2>
+      <div class="board" id="board"></div>
+
+      <button id="restart" class="secondary hidden">Restart</button>
+    </section>
+
+    <script src="/script.js"></script>
 
   </body>
 </html>
