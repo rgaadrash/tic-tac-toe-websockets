@@ -1,3 +1,5 @@
+const PORT = process.env.PORT || 3000;
+
 const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
@@ -112,7 +114,7 @@ wss.on("connection", (ws) => {
   });
 });
 
-server.listen(3000,'0.0.0.0', () => {
+server.listen(PORT,'0.0.0.0', () => {
   console.log("HTTP + WS running on 3000");
 });
 
